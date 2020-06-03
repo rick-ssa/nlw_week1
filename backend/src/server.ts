@@ -2,7 +2,7 @@ import express from 'express';
 import routes from './routes';
 import createDb from './database/create';
 
-createDb.initiateDataBase('database.sqlite')
+createDb.initiateDataBase('database.sqlite');
 
 const app = express();
 
