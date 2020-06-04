@@ -1,12 +1,16 @@
 import express from 'express';
-import routes from './routes';
+import itemsRoutes from './routes/itemsRoutes';
+import pointsRoutes from './routes/pointsRoutes';
 import createDb from './database/create';
+import path from 'path'
 
 createDb.initiateDataBase('database.sqlite');
 
 const app = express();
 
+app.use('/uploads', express.static(path.resolve(__dirname,'..','uploads')))
 app.use(express.json())
-app.use(routes)
+app.use('/items',itemsRoutes)
+app.use('/points',pointsRoutes)
 
 app.listen(3333);
