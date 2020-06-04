@@ -10,7 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/cors": "^2.8.6",
     "@types/sqlite3": "^3.1.6",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "sqlite3": "^4.2.0"
   },
