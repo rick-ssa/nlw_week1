@@ -7,6 +7,13 @@ class PointsControllers {
             response.json(point)
         })
     }
+
+    show = (request:Request, response: Response) =>{
+        dbManipulators.showPoint(Number(request.params.id),(row:any)=>{
+            if(!row) return response.sendStatus(404)
+            return response.json(row)
+        })
+    }
 }
 
 export default PointsControllers

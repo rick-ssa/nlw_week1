@@ -10,7 +10,18 @@ export default {
         db.close()
     },
 
-    addPoint: async (data: any ,callback: Function) => {
+    showItem: (id:number, callback: Function)=>{
+        let db = createDb.connect('database.sqlite')
+
+        db.get(`SELECT * FROM items WHERE id=?`,id,(err,row)=>{
+            if(err) throw {error: 'database failure'}
+            callback(row)
+        })
+
+        db.close()
+    },
+
+    addPoint: (data: any ,callback: Function) => {
         let db = createDb.connect('database.sqlite')
 
         let columnsNames = []
@@ -49,16 +60,45 @@ export default {
                 itemValues.push(point_id)
                 itemValues.push(items[i])
             }
-            console.log(itemValues)
+
             let sqlPointItems = `INSERT INTO point_items (point_id, item_id) VALUES ${placeholder}`
             
             db.run(sqlPointItems,itemValues,(err)=>{
                 if(err) {
                     db.run('ROLLBACK')
-                    throw {error: err}
+                    throw {error: 'database failure'}
                 }
                 callback({id: point_id, ...data})
                 db.exec('COMMIT')
+            })
+
+        })
+        
+    },
+
+    showPoint: (id:number, callback: Function)=>{
+        let db = createDb.connect('database.sqlite') 
+
+        db.serialize(()=>{
+            let r;
+            db.get(`SELECT * FROM points WHERE id = ?`, id, (err,row)=>{
+                if(err) throw {error: 'database failure'}
+    
+                if(!row) return callback(undefined)
+
+                let sqlItems = 'SELECT i.* FROM point_items as pi '
+                sqlItems += 'INNER JOIN items as i on i.id = pi.item_id WHERE point_id = ?'
+
+                db.all(sqlItems, id, (err,items)=>{
+                    if (err) return console.log(err)
+
+                    getItems(items)
+                })
+
+                function getItems (items:any) {
+                    callback({point:row,items})
+                }
+                
             })
 
         })

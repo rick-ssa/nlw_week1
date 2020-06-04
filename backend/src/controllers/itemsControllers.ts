@@ -10,6 +10,12 @@ class ItemsControllers {
             return response.json(serializedItems)
         })
     }
+
+    show = (request: Request, response: Response) => {
+        dbManipulators.showItem(Number(request.params.id), (row:any)=>{
+            return response.json(row)
+        })
+    }
 }
 
 export default ItemsControllers
