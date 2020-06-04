@@ -3,14 +3,15 @@ import {Database} from 'sqlite3'
 
 const sqlite3 = require('sqlite3').verbose();
 
-const connect = function(dbName: string) {
+const connect = function(dbName: string): Database{
     let db = new sqlite3.Database(path.resolve(__dirname,dbName))
-
+    db.exec("pragma foreign_keys=on")
     return db
 }
 
 const createTablePoints = (db: Database)=> {
     let sql = 'CREATE TABLE IF NOT EXISTS points ('
+        sql += 'id INTEGER PRIMARY KEY AUTOINCREMENT,'
         sql += 'image TEXT NOT NULL,'
         sql += 'name TEXT NOT NULL,'
         sql += 'email TEXT NOT NULL,'
@@ -28,24 +29,25 @@ const createTablePoints = (db: Database)=> {
 
 const createTableItems = (db: Database)=> {
     let sql = 'CREATE TABLE IF NOT EXISTS items ('
+        sql += 'id INTEGER PRIMARY KEY AUTOINCREMENT,'
         sql += 'image TEXT NOT NULL,'
         sql += 'title TEXT NOT NULL'
         sql += ')'    
     
     // seeds
-    /*const items = ['Lâmpada','lampadas.svg','Pilhas e Baterias', 'baterias.svg', 'Papéis e Papelão', 
+    /* const items = ['Lâmpada','lampadas.svg','Pilhas e Baterias', 'baterias.svg', 'Papéis e Papelão', 
                     'papeis-papelao.svg', 'Resídusos Eletrônicos', 'eletronicos.svg',
                     'Resíduos Orgânicos', 'organicos.svg', 'Óleo de Cozinha', 'oleo.svg'
                  ]
-    const placeHolders = items.filter((v,i)=>i % 2 === 0).map(v=>'(?,?)').join(',')*/
+    const placeHolders = items.filter((v,i)=>i % 2 === 0).map(v=>'(?,?)').join(',') */
 
     db.serialize(()=>{
         db.run(sql,(err: any)=>err && console.log(err)) 
-        /*.run(`INSERT INTO items(title, image) VALUES ${placeHolders}`,items,function(err){
-            console.log(this.lastID)
+        /* .run(`INSERT INTO items(title, image) VALUES ${placeHolders}`,items,function(err){
+            
         })
-        .all('Select * from items',(err:any, rows:any)=>console.log(rows))*/
-    })    
+        .all('Select * from items',(err:any, rows:any)=>console.log(rows)) */
+    })  
               
 }
 
@@ -53,8 +55,8 @@ const createTablePointItems = (db: Database)=> {
     let sql = 'CREATE TABLE IF NOT EXISTS point_items ('
         sql += 'point_id INTEGER NOT NULL,'
         sql += 'item_id INTEGER NOT NULL,'
-        sql += 'FOREIGN KEY (point_id) REFERENCES points (rowid),'
-        sql += 'FOREIGN KEY (item_id) REFERENCES items (rowid)'
+        sql += 'FOREIGN KEY (point_id) REFERENCES points (id),'
+        sql += 'FOREIGN KEY (item_id) REFERENCES items (id)'
         sql += ')'        
     db.run(sql,(err: any)=>err && console.log(err))           
 }
